@@ -70,8 +70,9 @@ class PostsCreateFormTests(TestCase):
         self.authorized_client.post(
             reverse('posts:post_edit',
                     kwargs={'pk': self.post.id}), data=form_data,)
-        response_2 = self.authorized_client.get(reverse('posts:post_detail',
-                     kwargs={'post_id': self.post.id}))
+        var_for_resp = reverse('posts:post_detail',
+                               kwargs={'post_id': self.post.id})
+        response_2 = self.authorized_client.get(var_for_resp)
         form_fields = Post.objects.all()[:0]
         for value in form_fields:
             with self.subTest(value=value):

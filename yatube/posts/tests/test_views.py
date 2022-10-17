@@ -84,9 +84,9 @@ class PostsPagesTests(TestCase):
                 self.assertIsInstance(form_field, value)
 
     def test_profile_page_shows_correct_context(self):
-        response = self.authorized_client.get(reverse('posts'
-                                                      ':profile',
-                     kwargs={'username': self.user.username}))
+        var_for_resp = reverse('posts:profile',
+                               kwargs={'username': self.user.username})
+        response = self.authorized_client.get(var_for_resp)
         form_fields = User.objects.all()[:0]
 
         for value in form_fields:
@@ -95,15 +95,14 @@ class PostsPagesTests(TestCase):
                 self.assertIsInstance(form_field, value)
 
     def test_post_detail_page_shows_correct_context(self):
-        response = self.authorized_client.get(reverse('posts:'
-                                                      'post_detail',
-                     kwargs={'post_id': self.post.id}))
+        var_for_resp = reverse('posts:post_detail',
+                               kwargs={'post_id': self.post.id})
+        response = self.authorized_client.get(var_for_resp)
         self.assertEqual(self.post, response.context['post'])
 
     def test_edit_page_shows_correct_context(self):
-        response = self.authorized_client.get(reverse('posts:'
-                                                      'post_edit',
-                     kwargs={'pk': self.post.id}))
+        var_for_resp = reverse('posts:post_edit',kwargs={'pk': self.post.id})
+        response = self.authorized_client.get(var_for_resp)
         form_fields = {
             'text': forms.fields.CharField,
             'group': forms.models.ModelChoiceField,
@@ -130,9 +129,9 @@ class PostsPagesTests(TestCase):
             group=PostsPagesTests.group,
             text='Test text'
         )
-        response = self.client.get(reverse('posts:'
-                                           'group_list',
-                     kwargs={'slug': 'test-slug'}))
+        var_for_resp = reverse('posts:group_list',
+                               kwargs={'slug': 'test-slug'})
+        response = self.client.get(var_for_resp)
         page = response.context['page_obj']
         self.assertIn(post, page)
 
@@ -142,8 +141,9 @@ class PostsPagesTests(TestCase):
             group=PostsPagesTests.group,
             text='Test text'
         )
-        response = self.client.get(reverse('posts:profile',
-                     kwargs={'username': self.post_author}))
+        var_for_resp = reverse('posts:profile',
+                               kwargs={'username': self.post_author})
+        response = self.client.get(var_for_resp)
         page = response.context['page_obj']
         self.assertIn(post, page)
 
@@ -153,8 +153,9 @@ class PostsPagesTests(TestCase):
             group=PostsPagesTests.group,
             text='Test text'
         )
-        response = self.client.get(reverse('posts:group_list',
-                     kwargs={'slug': 'test-slug-2'}))
+        var_for_resp = reverse('posts:group_list',
+                               kwargs={'slug': 'test-slug-2'})
+        response = self.client.get(var_for_resp)
         page = response.context['page_obj']
         self.assertNotEqual(post, page)
 
