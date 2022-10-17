@@ -101,7 +101,7 @@ class PostsPagesTests(TestCase):
         self.assertEqual(self.post, response.context['post'])
 
     def test_edit_page_shows_correct_context(self):
-        var_for_resp = reverse('posts:post_edit',kwargs={'pk': self.post.id})
+        var_for_resp = reverse('posts:post_edit', kwargs={'pk': self.post.id})
         response = self.authorized_client.get(var_for_resp)
         form_fields = {
             'text': forms.fields.CharField,
