@@ -36,14 +36,22 @@ class PostsURLTests(TestCase):
             f'/group/{self.group.slug}/': 'posts/group_list.html',
             f'/profile/{self.post.author}/': 'posts/profile.html',
             f'/posts/{self.post.pk}/': 'posts/post_detail.html',
-            f'/posts/{self.post.pk}/edit/': 'posts/create_post.html',
-            'posts/create/': 'posts/create_post.html',
+            # f'/posts/{self.post.pk}/edit/': 'posts/create_post.html',
+            # 'posts/create/': 'posts/create_post.html',
         }
         for address, template in templates_url_names.items():
             with self.subTest(address=address):
-                response = self.guest_client.get(address)
+                response = self.authorized_client.get(address)
                 self.assertTemplateUsed(response, template)
                 self.assertEqual(response.status_code, 200)
+
+    def test_create_url_exists_at_desired_location_unauthorized(self):
+        response = self.guest_client.get('/create/')
+        self.assertEqual(response.status_code, 302)
+
+    def test_post_edit_url_exists_at_desired_location_unauthorized(self):
+        response = self.guest_client.get(f'/{self.post.pk}/edit/')
+        self.assertEqual(response.status_code, 404)
 
     def test_create_url_exists_at_desired_location(self):
         response = self.authorized_client.get('/create/')
