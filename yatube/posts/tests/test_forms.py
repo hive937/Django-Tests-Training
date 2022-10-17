@@ -5,13 +5,13 @@ from django.contrib.auth import get_user_model
 from posts.forms import PostForm
 from posts.models import Post, Group
 from django.conf import settings
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
 User = get_user_model()
+
 
 @override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class PostsCreateFormTests(TestCase):
@@ -53,7 +53,7 @@ class PostsCreateFormTests(TestCase):
             group=PostsCreateFormTests.group,
             text='Test text'
         )
-        response = self.authorized_client.post(reverse('posts:post_create'), data=form_data,)
+        # response = self.authorized_client.post(reverse('posts:post_create'), data=form_data,)
         self.assertEqual(Post.objects.count(), posts_count + 1)
 
     def test_edit_post(self):
@@ -66,8 +66,12 @@ class PostsCreateFormTests(TestCase):
             group=PostsCreateFormTests.group,
             text='Test text'
         )
-        response = self.authorized_client.post(reverse('posts:post_edit', kwargs={'pk': self.post.id}), data=form_data,)
-        response_2 = self.authorized_client.get(reverse('posts:post_detail', kwargs={'post_id': self.post.id}))
+        response = self.authorized_client.post(
+            reverse('posts:post_edit',
+                    kwargs={'pk': self.post.id}), data=form_data,)
+        response_2 = self.authorized_client.get\
+            (reverse('posts:post_detail',
+                     kwargs={'post_id': self.post.id}))
         form_fields = Post.objects.all()[:0]
         for value in form_fields:
             with self.subTest(value=value):

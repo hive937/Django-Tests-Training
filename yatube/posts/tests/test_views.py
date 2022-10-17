@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.core.paginator import Paginator
 from django.test import Client, TestCase
 from django.urls import reverse
 from django import forms
@@ -40,9 +39,14 @@ class PostsPagesTests(TestCase):
     def test_pages_use_correct_template(self):
         templates_pages_names = {
             'posts/index.html': reverse('posts:index'),
-            'posts/group_list.html': reverse(f'posts:group_list', kwargs={'slug': 'test-slug'}),
-            'posts/profile.html': reverse('posts:profile', kwargs={'username': self.user.username}),
-            'posts/post_detail.html': (reverse('posts:post_detail', kwargs={'post_id': self.post.id})),
+            'posts/group_list.html': reverse('posts:group_list',
+                                             kwargs={'slug': 'test-slug'}),
+            'posts/profile.html':
+                reverse('posts:profile',
+                        kwargs={'username': self.user.username}),
+            'posts/post_detail.html':
+                reverse('posts:post_detail',
+                        kwargs={'post_id': self.post.id}),
         }
         for template, reverse_name in templates_pages_names.items():
             with self.subTest(template=template):
@@ -50,7 +54,9 @@ class PostsPagesTests(TestCase):
                 self.assertTemplateUsed(response, template)
 
     def test_edit_post_uses_correct_template(self):
-        response = self.authorized_client.get(reverse(f'posts:post_edit', kwargs={'pk': self.post.id}))
+        response = self.authorized_client.get(reverse
+                                              ('posts:post_edit',
+                                               kwargs={'pk': self.post.id}))
         self.assertTemplateUsed(response, 'posts/create_post.html')
 
     def test_create_post_uses_correct_template(self):
@@ -67,7 +73,9 @@ class PostsPagesTests(TestCase):
                 self.assertIsInstance(form_field, value)
 
     def test_group_list_page_shows_correct_context(self):
-        response = self.authorized_client.get(reverse('posts:group_list', kwargs={'slug': 'test-slug'}))
+        response = self.authorized_client.get(reverse
+                                              ('posts:group_list',
+                                               kwargs={'slug': 'test-slug'}))
         form_fields = Group.objects.all()[:0]
 
         for value in form_fields:
@@ -76,7 +84,9 @@ class PostsPagesTests(TestCase):
                 self.assertIsInstance(form_field, value)
 
     def test_profile_page_shows_correct_context(self):
-        response = self.authorized_client.get(reverse('posts:profile', kwargs={'username': self.user.username}))
+        response = self.authorized_client.get\
+            (reverse('posts:profile',
+                     kwargs={'username': self.user.username}))
         form_fields = User.objects.all()[:0]
 
         for value in form_fields:
@@ -85,13 +95,15 @@ class PostsPagesTests(TestCase):
                 self.assertIsInstance(form_field, value)
 
     def test_post_detail_page_shows_correct_context(self):
-        response = self.authorized_client.get(reverse('posts:post_detail', kwargs={'post_id': self.post.id}))
-        form_fields = list(Post.objects.all()[:0])
-
+        response = self.authorized_client.get\
+            (reverse('posts:post_detail',
+                     kwargs={'post_id': self.post.id}))
         self.assertEqual(self.post, response.context['post'])
 
     def test_edit_page_shows_correct_context(self):
-        response = self.authorized_client.get(reverse('posts:post_edit', kwargs={'pk': self.post.id}))
+        response = self.authorized_client.get\
+            (reverse('posts:post_edit',
+                     kwargs={'pk': self.post.id}))
         form_fields = {
             'text': forms.fields.CharField,
             'group': forms.models.ModelChoiceField,
@@ -118,7 +130,9 @@ class PostsPagesTests(TestCase):
             group=PostsPagesTests.group,
             text='Test text'
         )
-        response = self.client.get(reverse('posts:group_list', kwargs={'slug': 'test-slug'}))
+        response = self.client.get\
+            (reverse('posts:group_list',
+                     kwargs={'slug': 'test-slug'}))
         page = response.context['page_obj']
         self.assertIn(post, page)
 
@@ -128,7 +142,9 @@ class PostsPagesTests(TestCase):
             group=PostsPagesTests.group,
             text='Test text'
         )
-        response = self.client.get(reverse('posts:profile', kwargs={'username': self.post_author}))
+        response = self.client.get\
+            (reverse('posts:profile',
+                     kwargs={'username': self.post_author}))
         page = response.context['page_obj']
         self.assertIn(post, page)
 
@@ -138,9 +154,12 @@ class PostsPagesTests(TestCase):
             group=PostsPagesTests.group,
             text='Test text'
         )
-        response = self.client.get(reverse('posts:group_list', kwargs={'slug': 'test-slug-2'}))
+        response = self.client.get\
+            (reverse('posts:group_list',
+                     kwargs={'slug': 'test-slug-2'}))
         page = response.context['page_obj']
         self.assertNotEqual(post, page)
+
 
 class PaginatorViewsTest(TestCase):
     @classmethod
@@ -218,13 +237,14 @@ class PaginatorViewsTest(TestCase):
     def test_pages_contain_ten_records(self):
         pages_name = {
             'posts/index.html/': reverse('posts:index'),
-            'posts/group_list.html/': reverse(f'posts:group_list', kwargs={'slug': 'test-slug'}),
-            'posts/profile.html/': reverse('posts:profile', kwargs={'username': self.post_author}),
+            'posts/group_list.html/': reverse('posts:group_list',
+                                              kwargs={'slug': 'test-slug'}),
+            'posts/profile.html/':
+                reverse('posts:profile',
+                        kwargs={'username': self.post_author}),
         }
 
         for value, address in pages_name.items():
             with self.subTest(value=value):
                 response = self.authorized_client.get(address)
                 self.assertEqual(len(response.context['page_obj']), 10)
-
-
