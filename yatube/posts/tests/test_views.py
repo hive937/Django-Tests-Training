@@ -84,8 +84,8 @@ class PostsPagesTests(TestCase):
                 self.assertIsInstance(form_field, value)
 
     def test_profile_page_shows_correct_context(self):
-        response = self.authorized_client.get\
-            (reverse('posts:profile',
+        response = self.authorized_client.get(reverse('posts'
+                                                      ':profile',
                      kwargs={'username': self.user.username}))
         form_fields = User.objects.all()[:0]
 
@@ -95,14 +95,14 @@ class PostsPagesTests(TestCase):
                 self.assertIsInstance(form_field, value)
 
     def test_post_detail_page_shows_correct_context(self):
-        response = self.authorized_client.get\
-            (reverse('posts:post_detail',
+        response = self.authorized_client.get(reverse('posts:'
+                                                      'post_detail',
                      kwargs={'post_id': self.post.id}))
         self.assertEqual(self.post, response.context['post'])
 
     def test_edit_page_shows_correct_context(self):
-        response = self.authorized_client.get\
-            (reverse('posts:post_edit',
+        response = self.authorized_client.get(reverse('posts:'
+                                                      'post_edit',
                      kwargs={'pk': self.post.id}))
         form_fields = {
             'text': forms.fields.CharField,
@@ -130,8 +130,8 @@ class PostsPagesTests(TestCase):
             group=PostsPagesTests.group,
             text='Test text'
         )
-        response = self.client.get\
-            (reverse('posts:group_list',
+        response = self.client.get(reverse('posts:'
+                                           'group_list',
                      kwargs={'slug': 'test-slug'}))
         page = response.context['page_obj']
         self.assertIn(post, page)
@@ -142,8 +142,7 @@ class PostsPagesTests(TestCase):
             group=PostsPagesTests.group,
             text='Test text'
         )
-        response = self.client.get\
-            (reverse('posts:profile',
+        response = self.client.get(reverse('posts:profile',
                      kwargs={'username': self.post_author}))
         page = response.context['page_obj']
         self.assertIn(post, page)
@@ -154,8 +153,7 @@ class PostsPagesTests(TestCase):
             group=PostsPagesTests.group,
             text='Test text'
         )
-        response = self.client.get\
-            (reverse('posts:group_list',
+        response = self.client.get(reverse('posts:group_list',
                      kwargs={'slug': 'test-slug-2'}))
         page = response.context['page_obj']
         self.assertNotEqual(post, page)

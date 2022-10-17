@@ -53,7 +53,8 @@ class PostsCreateFormTests(TestCase):
             group=PostsCreateFormTests.group,
             text='Test text'
         )
-        # response = self.authorized_client.post(reverse('posts:post_create'), data=form_data,)
+        self.authorized_client.post(reverse('posts:post_create'),
+                                    data=form_data,)
         self.assertEqual(Post.objects.count(), posts_count + 1)
 
     def test_edit_post(self):
@@ -66,11 +67,10 @@ class PostsCreateFormTests(TestCase):
             group=PostsCreateFormTests.group,
             text='Test text'
         )
-        response = self.authorized_client.post(
+        self.authorized_client.post(
             reverse('posts:post_edit',
                     kwargs={'pk': self.post.id}), data=form_data,)
-        response_2 = self.authorized_client.get\
-            (reverse('posts:post_detail',
+        response_2 = self.authorized_client.get(reverse('posts:post_detail',
                      kwargs={'post_id': self.post.id}))
         form_fields = Post.objects.all()[:0]
         for value in form_fields:
