@@ -82,9 +82,9 @@ class PostsPagesTests(TestCase):
                 self.assertIsInstance(form_field, value)
 
     def test_profile_page_shows_correct_context(self):
+        usern_val = PostsPagesTests.user.username
         var_for_resp = reverse('posts:profile',
-                               kwargs={'username':
-                                           PostsPagesTests.user.username})
+                               kwargs={'username': usern_val})
         response = self.authorized_client.get(var_for_resp)
         form_fields = User.objects.all()[:0]
 

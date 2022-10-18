@@ -93,8 +93,7 @@ class PostsCreateFormTests(TestCase):
             'text': 'Тестовый текст',
             'group': PostsCreateFormTests.group,
         }
-        self.guest_client.post(reverse('posts:post_create'),
-                                        data=form_data, )
+        self.guest_client.post(reverse('posts:post_create'), data=form_data,)
         self.assertEqual(Post.objects.count(), posts_count)
 
     def test_edit_post_unauthorized(self):
