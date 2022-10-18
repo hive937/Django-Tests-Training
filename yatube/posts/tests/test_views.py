@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from django import forms
@@ -55,7 +54,8 @@ class PostsPagesTests(TestCase):
         response = self.authorized_client.get(reverse
                                               ('posts:post_edit',
                                                kwargs={'pk': self.post.id}))
-        self.assertTemplateUsed(response, 'posts/create_post.html') ## не понял как здесь переиспользовать переменные
+        self.assertTemplateUsed(response, 'posts/create_post.html')
+        # не понял как тут переиспользовать
 
     def test_create_post_uses_correct_template(self):
         response = self.authorized_client.get(reverse('posts:post_create'))
@@ -83,7 +83,8 @@ class PostsPagesTests(TestCase):
 
     def test_profile_page_shows_correct_context(self):
         var_for_resp = reverse('posts:profile',
-                               kwargs={'username': PostsPagesTests.user.username})
+                               kwargs={'username':
+                                           PostsPagesTests.user.username})
         response = self.authorized_client.get(var_for_resp)
         form_fields = User.objects.all()[:0]
 

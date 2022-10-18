@@ -1,7 +1,5 @@
-from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
-from django import forms
 
 from posts.models import Post, Group, User
 from posts.views import POSTS_PER_PAGE
@@ -73,4 +71,5 @@ class PaginatorViewsTest(TestCase):
         for value, address in pages_name.items():
             with self.subTest(value=value):
                 response = self.authorized_client.get(address)
-                self.assertEqual(len(response.context['page_obj']), POSTS_PER_PAGE)
+                self.assertEqual(len(response.context['page_obj']),
+                                 POSTS_PER_PAGE)

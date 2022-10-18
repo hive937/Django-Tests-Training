@@ -1,7 +1,6 @@
 import shutil
 import tempfile
 
-from django.contrib.auth import get_user_model
 from posts.forms import PostForm
 from posts.models import Post, Group, User
 from django.conf import settings
@@ -95,7 +94,7 @@ class PostsCreateFormTests(TestCase):
             'group': PostsCreateFormTests.group,
         }
         self.guest_client.post(reverse('posts:post_create'),
-                                    data=form_data, )
+                                        data=form_data, )
         self.assertEqual(Post.objects.count(), posts_count)
 
     def test_edit_post_unauthorized(self):
@@ -136,5 +135,3 @@ class PostsCreateFormTests(TestCase):
             with self.subTest(value=value):
                 response_2.context['post'][0].fields[value]
                 self.assertNotEqual(form_fields, form_data)
-
-
