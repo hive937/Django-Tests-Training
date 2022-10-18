@@ -3,9 +3,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from django import forms
 
-from posts.models import Post, Group
-
-User = get_user_model()
+from posts.models import Post, Group, User
 
 
 class PostsPagesTests(TestCase):
@@ -30,9 +28,9 @@ class PostsPagesTests(TestCase):
             author=cls.post_author,
             group=cls.group,
         )
+        cls.user = User.objects.create_user(username='StasBasov')
 
     def setUp(self):
-        self.user = User.objects.create_user(username='StasBasov')
         self.authorized_client = Client()
         self.authorized_client.force_login(self.post_author)
 
@@ -43,7 +41,7 @@ class PostsPagesTests(TestCase):
                                              kwargs={'slug': 'test-slug'}),
             'posts/profile.html':
                 reverse('posts:profile',
-                        kwargs={'username': self.user.username}),
+                        kwargs={'username': PostsPagesTests.user.username}),
             'posts/post_detail.html':
                 reverse('posts:post_detail',
                         kwargs={'post_id': self.post.id}),
@@ -57,7 +55,7 @@ class PostsPagesTests(TestCase):
         response = self.authorized_client.get(reverse
                                               ('posts:post_edit',
                                                kwargs={'pk': self.post.id}))
-        self.assertTemplateUsed(response, 'posts/create_post.html')
+        self.assertTemplateUsed(response, 'posts/create_post.html') ## не понял как здесь переиспользовать переменные
 
     def test_create_post_uses_correct_template(self):
         response = self.authorized_client.get(reverse('posts:post_create'))
@@ -85,7 +83,7 @@ class PostsPagesTests(TestCase):
 
     def test_profile_page_shows_correct_context(self):
         var_for_resp = reverse('posts:profile',
-                               kwargs={'username': self.user.username})
+                               kwargs={'username': PostsPagesTests.user.username})
         response = self.authorized_client.get(var_for_resp)
         form_fields = User.objects.all()[:0]
 
@@ -158,92 +156,3 @@ class PostsPagesTests(TestCase):
         response = self.client.get(var_for_resp)
         page = response.context['page_obj']
         self.assertNotEqual(post, page)
-
-
-class PaginatorViewsTest(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.post_author = User.objects.create(
-            username='post_author',
-        )
-        cls.group = Group.objects.create(
-            title='Тестовая группа',
-            slug='test-slug',
-            description='Тестовое описание',
-        )
-        cls.post = Post.objects.create(
-            text='Тестовый текст',
-            author=cls.post_author,
-            group=cls.group,
-        )
-        cls.post_2 = Post.objects.create(
-            text='Тестовый текст_2',
-            author=cls.post_author,
-            group=cls.group,
-        )
-        cls.post_3 = Post.objects.create(
-            text='Тестовый текст_3',
-            author=cls.post_author,
-            group=cls.group,
-        )
-        cls.post_4 = Post.objects.create(
-            text='Тестовый текст_4',
-            author=cls.post_author,
-            group=cls.group,
-        )
-        cls.post_5 = Post.objects.create(
-            text='Тестовый текст_5',
-            author=cls.post_author,
-            group=cls.group,
-        )
-        cls.post_6 = Post.objects.create(
-            text='Тестовый текст_6',
-            author=cls.post_author,
-            group=cls.group,
-        )
-        cls.post_7 = Post.objects.create(
-            text='Тестовый текст_7',
-            author=cls.post_author,
-            group=cls.group,
-        )
-        cls.post_8 = Post.objects.create(
-            text='Тестовый текст_8',
-            author=cls.post_author,
-            group=cls.group,
-        )
-        cls.post_9 = Post.objects.create(
-            text='Тестовый текст_9',
-            author=cls.post_author,
-            group=cls.group,
-        )
-        cls.post_10 = Post.objects.create(
-            text='Тестовый текст_10',
-            author=cls.post_author,
-            group=cls.group,
-        )
-        cls.post_11 = Post.objects.create(
-            text='Тестовый текст_11',
-            author=cls.post_author,
-            group=cls.group,
-        )
-
-    def setUp(self):
-        self.user = User.objects.create_user(username='StasBasov')
-        self.authorized_client = Client()
-        self.authorized_client.force_login(self.user)
-
-    def test_pages_contain_ten_records(self):
-        pages_name = {
-            'posts/index.html/': reverse('posts:index'),
-            'posts/group_list.html/': reverse('posts:group_list',
-                                              kwargs={'slug': 'test-slug'}),
-            'posts/profile.html/':
-                reverse('posts:profile',
-                        kwargs={'username': self.post_author}),
-        }
-
-        for value, address in pages_name.items():
-            with self.subTest(value=value):
-                response = self.authorized_client.get(address)
-                self.assertEqual(len(response.context['page_obj']), 10)

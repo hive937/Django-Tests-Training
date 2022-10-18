@@ -1,9 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 
-from posts.models import Post, Group
-
-User = get_user_model()
+from posts.models import Post, Group, User
 
 
 class PostsURLTests(TestCase):
@@ -23,12 +21,12 @@ class PostsURLTests(TestCase):
             author=cls.post_author,
             group=cls.group,
         )
+        cls.user = User.objects.create_user(username='HasNoName')
 
     def setUp(self):
         self.guest_client = Client()
-        self.user = User.objects.create_user(username='HasNoName')
         self.authorized_client = Client()
-        self.authorized_client.force_login(self.user)
+        self.authorized_client.force_login(PostsURLTests.user)
 
     def test_urls_uses_correct_template_at_desired_location(self):
         templates_url_names = {
@@ -36,8 +34,6 @@ class PostsURLTests(TestCase):
             f'/group/{self.group.slug}/': 'posts/group_list.html',
             f'/profile/{self.post.author}/': 'posts/profile.html',
             f'/posts/{self.post.pk}/': 'posts/post_detail.html',
-            # f'/posts/{self.post.pk}/edit/': 'posts/create_post.html',
-            # 'posts/create/': 'posts/create_post.html',
         }
         for address, template in templates_url_names.items():
             with self.subTest(address=address):
