@@ -6,15 +6,6 @@ from posts.views import POSTS_PER_PAGE
 
 
 class PaginatorViewsTest(TestCase):
-
-    def without_bulk(self):
-        for i in range(12):
-            Post.objects.bulk_create([
-                Post(text=f'Тестовый текст {i}',
-                     author=cls.post_author,
-                     group=cls.group, ),
-            ])
-
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -26,7 +17,12 @@ class PaginatorViewsTest(TestCase):
             slug='test-slug',
             description='Тестовое описание',
         )
-        cls.post = without_bulk()
+        for i in range(12):
+            Post.objects.bulk_create([
+                Post(text=f'Тестовый текст {i}',
+                     author=cls.post_author,
+                     group=cls.group, ),
+            ])
 
     def setUp(self):
         self.user = User.objects.create_user(username='StasBasov')
